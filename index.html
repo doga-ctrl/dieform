@@ -2,64 +2,758 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gifshot@0.4.5/build/gifshot.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#1e1e1e;--s1:#2a2a2a;--border:#444;--text:#e0e0e0;--muted:#888;--accent:#c8b97a;--cut:#e03535;--fold:#3a9e6e}
-body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace,sans-serif;font-size:11px;min-height:100vh;display:flex;flex-direction:column;overflow-y:auto}
-.header{padding:12px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.logo{font-size:13px;letter-spacing:0.04em}.logo span{color:var(--accent)}
-.badge{font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:2px 7px;border-radius:2px}
-.tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
-.tab{flex:1;padding:8px;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:1.5px solid transparent;transition:all 0.15s}
-.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
-.content{flex:1;overflow-y:auto;display:flex;flex-direction:column}
-.panel{display:none;flex-direction:column;flex:1}.panel.on{display:flex}
-.section{padding:14px;border-bottom:1px solid var(--border)}
-.slabel{font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-.btn-primary{width:100%;padding:10px;background:var(--accent);color:#1a1a18;border:none;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border-radius:2px;margin-bottom:6px}
-.btn-ghost{width:100%;padding:8px;background:transparent;color:var(--muted);border:1px solid var(--border);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:2px}
-.status{background:var(--s1);border:1px solid var(--border);border-radius:2px;padding:10px 12px;font-size:10px;color:var(--muted);line-height:1.7;margin-top:10px;min-height:60px}
-.status.ok{border-color:var(--fold);color:var(--text)}.status.err{border-color:var(--cut)}
-.rrow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:10px}
-.rrow:last-child{border-bottom:none}
-.rdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-right:8px}
-.rlabel{display:flex;align-items:center;color:var(--text)}.rcount{color:var(--muted)}
-.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
-.field label{font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted)}
-.field input{background:var(--s1);border:1px solid var(--border);color:var(--text);font-size:10px;padding:7px 10px;border-radius:2px;outline:none}
-.field input:focus{border-color:var(--accent)}
-.crow{display:flex;align-items:center;gap:8px}
-.cdot{width:16px;height:16px;border-radius:50%;border:1px solid var(--border);flex-shrink:0}
-#scene3d{width:100%;flex:1;min-height:180px;display:flex;align-items:center;justify-content:center;perspective:500px;cursor:grab;overflow:hidden;background:#161614}
-#scene3d:active{cursor:grabbing}
-#box3d{transform-style:preserve-3d;position:relative}
-.face3d{position:absolute;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'DM Mono',monospace;letter-spacing:0.06em;text-transform:uppercase;backface-visibility:visible;transition:filter 0.1s}
-.face3d:hover{filter:brightness(1.4)}
-#faceInfo{margin-left:auto;font-size:9px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase}
-.fpbtn{display:block;width:100%;padding:5px 8px;background:transparent;border:none;color:var(--muted);font-size:9px;text-align:left;cursor:pointer;border-radius:2px;letter-spacing:0.04em;white-space:nowrap}
-.fpbtn:hover{background:var(--border);color:var(--text)}
-.fpbtn.active{color:var(--accent);font-weight:bold}
-.overlay-label{font-size:8px;font-family:'DM Mono',monospace;letter-spacing:0.06em;text-transform:uppercase;background:rgba(0,0,0,0.55);padding:1px 5px;border-radius:1px;pointer-events:none;line-height:1.4}
-.upload-area{border:1px dashed var(--border);border-radius:2px;padding:12px;text-align:center;cursor:pointer;color:var(--muted);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;position:relative}
-.upload-area:hover{border-color:var(--accent)}
-.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upload-preview{margin-top:8px;display:none;width:100%;max-height:80px;object-fit:contain;border:1px solid var(--border);border-radius:2px}
-.vbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
-.vbtn{padding:6px;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:2px}
-.vbtn.on{background:var(--accent);color:#1a1a18;border-color:var(--accent)}
-.legend{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:14px;flex-shrink:0}
-.leg{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--muted)}</style>
+/* ─── Reset ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── Design Tokens ──────────────────────────────── */
+:root {
+  /* Surfaces — warm near-blacks from CLAUDE.md */
+  --bg:          #0e0e0c;
+  --s0:          #131310;
+  --s1:          #191916;
+  --s2:          #1e1e1b;
+  --s3:          #272723;
+
+  /* Borders */
+  --border:      #252521;
+  --border-hi:   #343430;
+
+  /* Text — warm whites */
+  --text:        #eceadf;
+  --text-2:      #9c9888;
+  --muted:       #5e5a52;
+
+  /* Brand */
+  --accent:      #c8b97a;
+  --accent-dim:  rgba(200,185,122,0.09);
+  --accent-glow: rgba(200,185,122,0.24);
+
+  /* Semantic */
+  --cut:         #d94545;
+  --fold:        #3a9e6e;
+
+  /* Motion */
+  --t:           0.16s ease;
+
+  /* Fonts */
+  --mono:        'DM Mono', 'Courier New', monospace;
+  --serif:       'Cormorant Garamond', Georgia, serif;
+
+  /* Type scale — nothing below 10px in UI */
+  --text-xs:     10px;   /* labels, badges, captions */
+  --text-sm:     11px;   /* secondary UI text */
+  --text-base:   12px;   /* body / default */
+  --text-btn:    11px;   /* button labels */
+}
+
+/* ─── Scrollbar ──────────────────────────────────── */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--s3); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ─── Base ───────────────────────────────────────── */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Header ─────────────────────────────────────── */
+/* GAC-inspired: generous height, confident brand identity */
+.header {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  background: var(--s0);
+  position: relative;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 5%, var(--accent) 40%, var(--accent) 60%, transparent 95%);
+  opacity: 0.28;
+}
+
+.logo {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.logo em {
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 300;
+}
+
+.logo-sub {
+  font-family: var(--mono);
+  font-size: var(--text-xs);   /* 10px — minimum floor */
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.badge {
+  font-family: var(--mono);
+  font-size: var(--text-xs);   /* 10px */
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  border: 1px solid var(--border-hi);
+  padding: 5px 12px;
+  border-radius: 99px;
+  background: var(--s2);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fold);
+  box-shadow: 0 0 6px var(--fold);
+  flex-shrink: 0;
+  animation: pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ─── Tabs ───────────────────────────────────────── */
+/* GAC-inspired: clean, spacious, confident nav */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--s0);
+  padding: 0 12px;
+  gap: 2px;
+}
+
+.tab {
+  flex: 1;
+  padding: 13px 8px 12px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);   /* 11px */
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  border-bottom: 1.5px solid transparent;
+  transition: color var(--t), border-color var(--t);
+  position: relative;
+  top: 1px;
+}
+
+.tab:hover { color: var(--text-2); }
+.tab.on { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ─── Content / Panels ───────────────────────────── */
+.content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+.panel { display: none; flex-direction: column; flex: 1; }
+.panel.on { display: flex; }
+
+.section {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ─── Section Label ──────────────────────────────── */
+/* GAC uses clean visual hierarchy — section labels as clear dividers */
+.slabel {
+  font-family: var(--mono);
+  font-size: var(--text-xs);   /* 10px */
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── Buttons ────────────────────────────────────── */
+/* GAC: generous height, clean geometry */
+.btn-primary {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--accent);
+  color: #0e0e0c;
+  border: none;
+  font-family: var(--mono);
+  font-size: var(--text-btn);   /* 11px */
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: background var(--t), box-shadow var(--t), transform var(--t);
+}
+
+.btn-primary:hover {
+  background: #d5c98c;
+  box-shadow: 0 4px 22px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active  { transform: translateY(0); box-shadow: none; }
+
+.btn-primary:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-ghost {
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border-hi);
+  font-family: var(--mono);
+  font-size: var(--text-btn);   /* 11px */
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: border-color var(--t), color var(--t), background var(--t);
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ─── Status Box ─────────────────────────────────── */
+.status {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 13px 15px;
+  font-size: var(--text-sm);   /* 11px */
+  font-family: var(--mono);
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: 12px;
+  min-height: 52px;
+  transition: border-color var(--t), background var(--t);
+}
+
+.status.ok {
+  border-color: rgba(58,158,110,0.4);
+  color: var(--text);
+  background: rgba(58,158,110,0.05);
+}
+
+.status.err {
+  border-color: rgba(217,69,69,0.4);
+  color: var(--text);
+  background: rgba(217,69,69,0.05);
+}
+
+/* ─── Results ────────────────────────────────────── */
+.rrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  transition: border-color var(--t), background var(--t);
+}
+
+.rrow:last-child { margin-bottom: 0; }
+.rrow:hover { border-color: var(--border-hi); background: var(--s2); }
+
+.rdot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: 11px;
+}
+
+.rlabel {
+  display: flex;
+  align-items: center;
+  color: var(--text-2);
+  font-size: var(--text-sm);   /* 11px */
+}
+
+.rcount {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text);
+  min-width: 34px;
+  text-align: right;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* ─── Form Fields ────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+
+.field label {
+  font-family: var(--mono);
+  font-size: var(--text-xs);   /* 10px */
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.field input {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--text-sm);   /* 11px */
+  padding: 10px 13px;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color var(--t), background var(--t), box-shadow var(--t);
+}
+
+.field input:focus {
+  border-color: var(--accent);
+  background: var(--s2);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.crow { display: flex; align-items: center; gap: 10px; }
+
+.cdot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-hi);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform var(--t), box-shadow var(--t);
+}
+
+.cdot:hover { transform: scale(1.1); box-shadow: 0 0 10px rgba(255,255,255,0.08); }
+
+/* ─── Upload Area ────────────────────────────────── */
+/* GAC: generous negative space, minimal ornament */
+.upload-area {
+  border: 1px dashed var(--border-hi);
+  border-radius: 8px;
+  padding: 28px 20px 24px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-sm);   /* 11px */
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  position: relative;
+  transition: border-color var(--t), color var(--t), background var(--t);
+  background: var(--s1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-area svg {
+  opacity: 0.28;
+  transition: opacity var(--t), transform var(--t);
+}
+
+.upload-area:hover {
+  border-color: rgba(200,185,122,0.45);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.upload-area:hover svg {
+  opacity: 0.65;
+  transform: translateY(-3px);
+}
+
+.upload-area input[type=file] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-sub {
+  font-size: var(--text-xs);   /* 10px */
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  opacity: 0.6;
+  text-transform: none;
+}
+
+.upload-preview {
+  margin-top: 10px;
+  display: none;
+  width: 100%;
+  max-height: 80px;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+/* ─── 3D Scene ───────────────────────────────────── */
+#scene3d {
+  width: 100%;
+  flex: 1;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 500px;
+  cursor: grab;
+  overflow: hidden;
+  background: #090907;
+  position: relative;
+}
+
+#scene3d::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 20%, rgba(200,185,122,0.07) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+#scene3d:active { cursor: grabbing; }
+
+#box3d { transform-style: preserve-3d; position: relative; }
+
+/* face3d labels live on tiny 3D faces — 9px acceptable here */
+.face3d {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backface-visibility: visible;
+  transition: filter 0.12s;
+}
+
+.face3d:hover { filter: brightness(1.4); }
+
+/* ─── Popup ──────────────────────────────────────── */
+.fpbtn {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  font-family: var(--mono);
+  font-size: var(--text-base);  /* 12px */
+  text-align: left;
+  cursor: pointer;
+  border-radius: 5px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  transition: background var(--t), color var(--t);
+}
+
+.fpbtn:hover  { background: var(--s3); color: var(--text); }
+.fpbtn.active { color: var(--accent); background: var(--accent-dim); }
+
+/* ─── Panel Overlay Labels ───────────────────────── */
+.overlay-label {
+  font-size: 12px;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 3px 9px;
+  border-radius: 4px;
+  pointer-events: none;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* ─── 3D View Controls ───────────────────────────── */
+.vbtns {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--s0);
+}
+
+.vbtn {
+  padding: 9px 4px;
+  font-family: var(--mono);
+  font-size: var(--text-xs);   /* 10px */
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 5px;
+  transition: color var(--t), border-color var(--t), background var(--t);
+}
+
+.vbtn:hover {
+  color: var(--text-2);
+  border-color: var(--border-hi);
+  background: var(--s1);
+}
+
+.vbtn.on {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: rgba(200,185,122,0.3);
+}
+
+/* ─── Legend (3D view top bar) ───────────────────── */
+.legend {
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  background: var(--s0);
+  min-height: 42px;
+}
+
+.leg {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--text-xs);   /* 10px */
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+/* ─── Export Section ─────────────────────────────── */
+.export-section {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--s0);
+}
+
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.export-angle-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: var(--s1);
+  text-align: center;
+  transition: border-color var(--t), color var(--t), background var(--t);
+  user-select: none;
+}
+
+.export-angle-card input { display: none; }
+
+.export-angle-card.checked {
+  border-color: rgba(200,185,122,0.4);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.export-angle-card svg { opacity: 0.55; }
+.export-angle-card.checked svg { opacity: 1; }
+
+.export-opts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.export-opt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.export-bg-toggle { display: flex; gap: 3px; }
+
+.ebtn {
+  padding: 4px 10px;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  border: 1px solid var(--border-hi);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--t);
+}
+
+.ebtn.active {
+  background: var(--s3);
+  color: var(--text-2);
+  border-color: var(--border-hi);
+}
+
+#exportScale, .export-select {
+  background: var(--s1);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  padding: 4px 6px;
+  border-radius: 4px;
+  outline: none;
+}
+
+.gif-progress {
+  display: none;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  text-align: center;
+}
+
+.export-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--s0);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  user-select: none;
+  transition: color var(--t);
+  flex-shrink: 0;
+}
+.export-toggle:hover { color: var(--text-2); }
+.export-toggle .export-toggle-arrow { transition: transform var(--t); }
+.export-toggle.open .export-toggle-arrow { transform: rotate(180deg); }
+
+/* ─── Face Popup (replaces heavy inline style) ───── */
+#facePopup {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  background: var(--s2);
+  border: 1px solid var(--border-hi);
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 100px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+/* ─── 3D Legend bar elements ─────────────────────── */
+#faceInfo {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+#foldBadge {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--text-2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-left: auto;
+  background: var(--s2);
+  border: 1px solid var(--border-hi);
+  border-radius: 99px;
+  padding: 4px 12px;
+}
+</style>
 </head>
 <body>
 
 <div class="header">
-  <div class="logo">Die<span>form</span></div>
-  <div class="badge">Studio</div>
+  <div>
+    <div class="logo">Die<em>form</em></div>
+    <div class="logo-sub">Good Afternoon Creative</div>
+  </div>
+  <div class="badge">
+    <div class="live-dot"></div>
+    Studio
+  </div>
 </div>
 
 <div class="tabs">
   <button class="tab on" id="tab-scan-btn">Tara</button>
-  <button class="tab" id="tab-preview-btn">3D</button>
+  <button class="tab" id="tab-preview-btn">3D Önizleme</button>
   <button class="tab" id="tab-settings-btn">Ayarlar</button>
 </div>
 
@@ -75,13 +769,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace,sans
       <div class="slabel">1 — Blank Diecut</div>
       <div class="upload-area" id="dielineUploadArea">
         <input type="file" id="dielineInput" accept="image/*">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/><path d="m12 6 3-3 3 3"/>
+        </svg>
         Blank bıçak izi yükle
+        <span class="upload-sub">PNG, JPG · sürükle veya tıkla</span>
       </div>
       <div id="dieEditor" style="display:none;margin-top:8px">
         <div id="dieEditorWrap" style="position:relative;line-height:0">
-          <img id="dieEditorImg" style="width:100%;display:block;border:1px solid var(--border);border-radius:2px">
+          <img id="dieEditorImg" style="width:100%;display:block;border:1px solid var(--border);border-radius:5px">
           <div id="panelOverlays" style="position:absolute;top:0;left:0;width:100%;height:100%"></div>
-          <div id="facePopup" style="display:none;position:absolute;z-index:10;background:#1a1a1a;border:1px solid var(--border);border-radius:3px;padding:4px;min-width:88px;box-shadow:0 4px 12px rgba(0,0,0,0.6)"></div>
+          <div id="facePopup"></div>
         </div>
         <button class="btn-primary" id="scanImageBtn" style="margin-top:8px">Analiz Et</button>
       </div>
@@ -90,9 +788,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace,sans
       <div class="slabel">2 — Tasarım Görseli</div>
       <div class="upload-area" id="artworkUploadArea">
         <input type="file" id="artworkInput" accept="image/*">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>
+        </svg>
         Baskı tasarımı yükle
+        <span class="upload-sub">PNG, JPG · sürükle veya tıkla</span>
       </div>
-      <img id="artworkPreview" style="display:none;width:100%;margin-top:6px;border:1px solid var(--border);border-radius:2px">
+      <img id="artworkPreview" style="display:none;width:100%;margin-top:8px;border:1px solid var(--border);border-radius:5px">
     </div>
     <div class="section" id="resultsSection" style="display:none">
       <div class="slabel">Tespit Edilenler</div>
@@ -100,30 +802,154 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace,sans
     </div>
     <div class="section">
       <div class="slabel">Konvansiyon</div>
-      <div style="font-size:9px;color:var(--muted);line-height:1.8">
-        Layer: <span style="color:var(--cut)">Cut</span> / <span style="color:var(--fold)">Fold</span><br>
-        veya stroke rengi ile eşleştirme
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(217,69,69,0.08);border:1px solid rgba(217,69,69,0.25);border-radius:20px;padding:4px 11px">
+          <div style="width:5px;height:5px;border-radius:50%;background:var(--cut);flex-shrink:0"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:400;color:var(--cut);letter-spacing:0.14em;text-transform:uppercase">Kesim</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(58,158,110,0.08);border:1px solid rgba(58,158,110,0.25);border-radius:20px;padding:4px 11px">
+          <div style="width:5px;height:5px;border-radius:50%;background:var(--fold);flex-shrink:0"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:400;color:var(--fold);letter-spacing:0.14em;text-transform:uppercase">Kırım</span>
+        </div>
+        <span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.1em">layer / stroke rengi</span>
       </div>
     </div>
   </div>
 
   <div class="panel" id="tab-preview" style="flex-direction:column">
     <div class="legend">
-      <div class="leg"><svg width="18" height="2"><line x1="0" y1="1" x2="18" y2="1" stroke="#e03535" stroke-width="2"/></svg>Kesim</div>
-      <div class="leg"><svg width="18" height="2"><line x1="0" y1="1" x2="18" y2="1" stroke="#3a9e6e" stroke-width="1.5" stroke-dasharray="4,3"/></svg>Kırım</div>
       <div id="faceInfo"></div>
+      <div id="foldBadge"></div>
     </div>
     <div id="scene3d"><div id="box3d"></div></div>
     <div class="vbtns">
       <button class="vbtn" id="vbtn-front">Ön</button>
-      <button class="vbtn" id="vbtn-top">Üst</button>
-      <button class="vbtn" id="vbtn-right">Sağ</button>
       <button class="vbtn" id="vbtn-back">Arka</button>
-      <button class="vbtn" id="vbtn-bottom">Alt</button>
       <button class="vbtn" id="vbtn-left">Sol</button>
+      <button class="vbtn" id="vbtn-right">Sağ</button>
+      <button class="vbtn" id="vbtn-top">Üst</button>
+      <button class="vbtn" id="vbtn-bottom">Alt</button>
       <button class="vbtn on" id="vbtn-rot">↻ Döndür</button>
       <button class="vbtn" id="vbtn-zoom-reset">⊙ Sıfırla</button>
+      <button class="vbtn" id="vbtn-fold-all">⊞ Kat</button>
+      <button class="vbtn" id="vbtn-unfold-all">⊟ Aç</button>
     </div>
+    <div class="export-toggle" id="exportToggle">
+      <span>Export</span>
+      <span class="export-toggle-arrow">▾</span>
+    </div>
+    <div id="exportPanel" style="display:none">
+    <div class="export-section">
+      <div class="slabel">PNG Export</div>
+      <div class="export-grid" id="exportGrid">
+        <label class="export-angle-card checked" data-preset="iso-r">
+          <input type="checkbox" checked>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.2">
+            <polygon points="14,4 22,8 14,12 6,8"/>
+            <polygon points="6,8 6,21 14,25 14,12"/>
+            <polygon points="14,12 22,8 22,21 14,25"/>
+          </svg>
+          <span>İzo Sağ</span>
+        </label>
+        <label class="export-angle-card checked" data-preset="iso-l">
+          <input type="checkbox" checked>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.2">
+            <g transform="translate(28,0) scale(-1,1)">
+              <polygon points="14,4 22,8 14,12 6,8"/>
+              <polygon points="6,8 6,21 14,25 14,12"/>
+              <polygon points="14,12 22,8 22,21 14,25"/>
+            </g>
+          </svg>
+          <span>İzo Sol</span>
+        </label>
+        <label class="export-angle-card" data-preset="iso-br">
+          <input type="checkbox">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.2">
+            <g transform="rotate(180 14 14)">
+              <polygon points="14,4 22,8 14,12 6,8"/>
+              <polygon points="6,8 6,21 14,25 14,12"/>
+              <polygon points="14,12 22,8 22,21 14,25"/>
+            </g>
+          </svg>
+          <span>İzo Arka Sağ</span>
+        </label>
+        <label class="export-angle-card" data-preset="iso-bl">
+          <input type="checkbox">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.2">
+            <g transform="rotate(180 14 14) translate(28,0) scale(-1,1)">
+              <polygon points="14,4 22,8 14,12 6,8"/>
+              <polygon points="6,8 6,21 14,25 14,12"/>
+              <polygon points="14,12 22,8 22,21 14,25"/>
+            </g>
+          </svg>
+          <span>İzo Arka Sol</span>
+        </label>
+        <label class="export-angle-card" data-preset="front">
+          <input type="checkbox">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="8" y="5" width="12" height="18" rx="1"/>
+          </svg>
+          <span>Önden</span>
+        </label>
+        <label class="export-angle-card" data-preset="top">
+          <input type="checkbox">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.2">
+            <polygon points="14,8 22,13 14,18 6,13"/>
+          </svg>
+          <span>Üstten</span>
+        </label>
+      </div>
+      <div class="export-opts">
+        <label class="export-opt-row">
+          <span>Arka Plan</span>
+          <div class="export-bg-toggle">
+            <button class="ebtn active" id="exportBgDark">Koyu</button>
+            <button class="ebtn" id="exportBgTransparent">Şeffaf</button>
+          </div>
+        </label>
+        <label class="export-opt-row">
+          <span>Çözünürlük</span>
+          <select id="exportScale">
+            <option value="2">2× (önerilen)</option>
+            <option value="1">1×</option>
+            <option value="4">4×</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn-primary" id="exportBtn">Seçili Açıları İndir</button>
+    </div>
+
+    <div class="export-section">
+      <div class="slabel">GIF Turntable</div>
+      <div class="export-opts">
+        <label class="export-opt-row">
+          <span>Kare Sayısı</span>
+          <select id="gifFrames" class="export-select">
+            <option value="12">12 kare (hızlı)</option>
+            <option value="24" selected>24 kare</option>
+            <option value="36">36 kare (akıcı)</option>
+          </select>
+        </label>
+        <label class="export-opt-row">
+          <span>Hız</span>
+          <select id="gifDelay" class="export-select">
+            <option value="60">Hızlı</option>
+            <option value="100" selected>Normal</option>
+            <option value="160">Yavaş</option>
+          </select>
+        </label>
+        <label class="export-opt-row">
+          <span>Çözünürlük</span>
+          <select id="gifScale" class="export-select">
+            <option value="1" selected>1× (önerilen)</option>
+            <option value="2">2×</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn-primary" id="gifExportBtn">GIF İndir</button>
+      <div class="gif-progress" id="gifProgress"></div>
+    </div>
+    </div><!-- /exportPanel -->
   </div>
 
   <div class="panel" id="tab-settings">
@@ -145,6 +971,1332 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace,sans
   </div>
 </div>
 
-<script src="index.js"></script>
+<script>
+// Dieform Studio — UXP Plugin (v2 — kapak animasyonu ekli)
+
+const state = {
+  scanned: false,
+  cutPaths: [], foldPaths: [], panels: [],
+  selectedFace: null,
+  dielineUrl: null,
+  artworkUrl: null,
+  foldState: {},  // { "panelId-direction": angleDegrees }  örn: {"5-right": 90}
+  boxDims: null,
+  settings: { cutLayerName:'Cut', foldLayerName:'Fold', cutColor:'#e03535', foldColor:'#3a9e6e', W:65, H:90, D:18 },
+};
+
+const FACE_COLORS = { front:'#c8b97a', back:'#a89850', left:'#7a9ec8', right:'#5a7ea8', top:'#7ac87a', bottom:'#5aa85a', flap:'#c87aa8', tuck_in:'#c8956a', tuck_out:'#a8756a', extra:'#666' };
+const FACE_LABELS = { front:'Ön', back:'Arka', left:'Sol Yan', right:'Sağ Yan', top:'Üst Kapak', bottom:'Alt Kapak', flap:'Yapıştırma', tuck_in:'Tuck In', tuck_out:'Tuck Out', extra:'Ekstra' };
+
+const FACE_OPTIONS = [
+  {v:'front',    l:'Ön'},
+  {v:'back',     l:'Arka'},
+  {v:'left',     l:'Sol Yan'},
+  {v:'right',    l:'Sağ Yan'},
+  {v:'top',      l:'Üst Kapak'},
+  {v:'bottom',   l:'Alt Kapak'},
+  {v:'flap',     l:'Yapıştırma'},
+  {v:'tuck_in',  l:'Tuck In'},
+  {v:'tuck_out', l:'Tuck Out'},
+  {v:'extra',    l:'Ekstra'},
+];
+
+// ─── TABS ─────────────────────────────────────────
+function switchTab(name) {
+  ['scan','preview','settings'].forEach(n => {
+    document.getElementById('tab-'+n).classList.toggle('on', n===name);
+    document.getElementById('tab-'+n+'-btn').classList.toggle('on', n===name);
+  });
+  if(name==='preview') setTimeout(initThreeIfNeeded, 50);
+}
+
+// ─── SETTINGS ─────────────────────────────────────
+function saveSettings() {
+  state.settings.cutLayerName  = document.getElementById('cutLayerName').value.trim() || 'Cut';
+  state.settings.foldLayerName = document.getElementById('foldLayerName').value.trim() || 'Fold';
+  state.settings.cutColor      = document.getElementById('cutColor').value || '#e03535';
+  state.settings.foldColor     = document.getElementById('foldColor').value || '#3a9e6e';
+  showStatus('Ayarlar kaydedildi.', 'ok');
+}
+
+function updateDot(type) {
+  const color = document.getElementById(type+'Color').value;
+  if(/^#[0-9a-fA-F]{6}$/.test(color)) document.getElementById(type+'Dot').style.background = color;
+}
+
+// ─── SCAN ─────────────────────────────────────────
+async function scanDocument() {
+  const btn = document.getElementById('scanBtn');
+  btn.disabled = true;
+  btn.textContent = 'Taranıyor...';
+  showStatus('Döküman taranıyor...', '');
+  try {
+    const result = await readDocument();
+    state.cutPaths = result.cutPaths;
+    state.foldPaths = result.foldPaths;
+    state.panels = result.panels;
+    state.scanned = true;
+    state.foldState = {}; initFoldState(state.panels);
+    showResults(result);
+    if(boxInit) buildBoxFrom(result);
+  } catch(e) {
+    showStatus('Hata: ' + (e.message || String(e)), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Dökümanı Tara';
+  }
+}
+
+async function readDocument() {
+  let appModule = null;
+  try { appModule = require('photoshop'); } catch(e) {}
+  if(!appModule) try { appModule = require('illustrator'); } catch(e) {}
+
+  if(appModule) {
+    try {
+      const doc = appModule.app.activeDocument;
+      if(doc) return await parseDoc(doc);
+    } catch(e) {}
+  }
+  return simulateScan();
+}
+
+async function parseDoc(doc) {
+  const cutPaths = [], foldPaths = [];
+  const cutName  = state.settings.cutLayerName.toLowerCase();
+  const foldName = state.settings.foldLayerName.toLowerCase();
+  const cutRgb   = hexToRgb(state.settings.cutColor);
+  const foldRgb  = hexToRgb(state.settings.foldColor);
+  try {
+    const layers = doc.layers;
+    for(let i=0;i<layers.length;i++) {
+      const layer = layers[i];
+      const lname = (layer.name||'').toLowerCase();
+      const isCutL = lname.includes(cutName), isFoldL = lname.includes(foldName);
+      const items = layer.pageItems||[];
+      for(let j=0;j<items.length;j++) {
+        const item = items[j];
+        const bounds = item.geometricBounds||item.bounds;
+        if(!bounds) continue;
+        const pd = { left:bounds[0], top:bounds[1], right:bounds[2], bottom:bounds[3], width:Math.abs(bounds[2]-bounds[0]), height:Math.abs(bounds[3]-bounds[1]) };
+        const sc = getStrokeRgb(item);
+        if(isCutL  || colorMatch(sc,cutRgb))  cutPaths.push(pd);
+        if(isFoldL || colorMatch(sc,foldRgb)) foldPaths.push(pd);
+      }
+    }
+  } catch(e) {}
+  return { success:true, cutPaths, foldPaths, panels:detectPanels(cutPaths,foldPaths) };
+}
+
+function getStrokeRgb(item) {
+  try {
+    const c = item.strokeColor;
+    if(!c) return null;
+    if(c.red !== undefined) return { r:Math.round(c.red), g:Math.round(c.green), b:Math.round(c.blue) };
+    if(c.cyan !== undefined) return cmykToRgb(c.cyan,c.magenta,c.yellow,c.black);
+  } catch(e) {}
+  return null;
+}
+
+function hexToRgb(hex) { return { r:parseInt(hex.slice(1,3),16), g:parseInt(hex.slice(3,5),16), b:parseInt(hex.slice(5,7),16) }; }
+function cmykToRgb(c,m,y,k) { return { r:Math.round(255*(1-c/100)*(1-k/100)), g:Math.round(255*(1-m/100)*(1-k/100)), b:Math.round(255*(1-y/100)*(1-k/100)) }; }
+function colorMatch(a,b,t=40) { return a&&b&&Math.abs(a.r-b.r)<t&&Math.abs(a.g-b.g)<t&&Math.abs(a.b-b.b)<t; }
+
+// Köşelerden BFS flood fill → diecut dışındaki alanları işaretler
+function detectOutsideMask(px, cw, ch) {
+  const outside = new Uint8Array(cw * ch);
+  const queue = [];
+
+  function isBackground(idx) {
+    const i = idx * 4;
+    if (px[i + 3] < 30) return true;
+    return px[i] > 220 && px[i + 1] > 220 && px[i + 2] > 220;
+  }
+
+  function seed(x, y) {
+    const idx = y * cw + x;
+    if (!outside[idx] && isBackground(idx)) { outside[idx] = 1; queue.push(idx); }
+  }
+
+  for (let x = 0; x < cw; x++) { seed(x, 0); seed(x, ch - 1); }
+  for (let y = 1; y < ch - 1; y++) { seed(0, y); seed(cw - 1, y); }
+
+  let head = 0;
+  while (head < queue.length) {
+    const idx = queue[head++];
+    const x = idx % cw, y = (idx / cw) | 0;
+    if (x > 0      && !outside[idx - 1]  && isBackground(idx - 1))  { outside[idx - 1]  = 1; queue.push(idx - 1); }
+    if (x < cw - 1 && !outside[idx + 1]  && isBackground(idx + 1))  { outside[idx + 1]  = 1; queue.push(idx + 1); }
+    if (y > 0      && !outside[idx - cw] && isBackground(idx - cw)) { outside[idx - cw] = 1; queue.push(idx - cw); }
+    if (y < ch - 1 && !outside[idx + cw] && isBackground(idx + cw)) { outside[idx + cw] = 1; queue.push(idx + cw); }
+  }
+
+  return outside;
+}
+
+function detectPanels(cutPaths, foldPaths) {
+  const all = [...cutPaths,...foldPaths];
+  if(!all.length) return [];
+  const minX=Math.min(...all.map(p=>p.left)), maxX=Math.max(...all.map(p=>p.right));
+  const minY=Math.min(...all.map(p=>Math.min(p.top,p.bottom))), maxY=Math.max(...all.map(p=>Math.max(p.top,p.bottom)));
+  const vS=[], hS=[];
+  foldPaths.forEach(p => {
+    if(p.width<p.height*0.2) vS.push((p.left+p.right)/2);
+    if(p.height<p.width*0.2) hS.push((p.top+p.bottom)/2);
+  });
+  const vU=[...new Set(vS.map(v=>Math.round(v)))].sort((a,b)=>a-b);
+  const hU=[...new Set(hS.map(v=>Math.round(v)))].sort((a,b)=>a-b);
+  const xB=[minX,...vU,maxX], yB=[minY,...hU,maxY];
+
+  const raw=[]; let idx=0;
+  for(let yi=0;yi<yB.length-1;yi++) for(let xi=0;xi<xB.length-1;xi++) {
+    const pw=Math.abs(xB[xi+1]-xB[xi]), ph=Math.abs(yB[yi+1]-yB[yi]);
+    if(pw<2||ph<2) continue;
+    raw.push({id:idx++, x:xB[xi], y:yB[yi], w:pw, h:ph, face:'extra', label:'Ekstra'});
+  }
+  if(!raw.length) return [];
+
+  // ── Komşuluk grafiği ──────────────────────────────
+  const EPS = 1;
+  const byLeft = {}, byTop = {}, byRight = {}, byBottom = {};
+  raw.forEach(p => {
+    const r = Math.round(p.x + p.w), b = Math.round(p.y + p.h);
+    const l = Math.round(p.x),       t = Math.round(p.y);
+    (byLeft[l]   = byLeft[l]   || []).push(p);
+    (byTop[t]    = byTop[t]    || []).push(p);
+    (byRight[r]  = byRight[r]  || []).push(p);
+    (byBottom[b] = byBottom[b] || []).push(p);
+  });
+  const vUset = new Set(vU.map(v => Math.round(v)));
+  const hUset = new Set(hU.map(v => Math.round(v)));
+  function ovlap(a0, a1, b0, b1) { return Math.max(0, Math.min(a1, b1) - Math.max(a0, b0)); }
+  function edgeType(coord, set) {
+    for (let d = 0; d <= EPS; d++) {
+      if (set.has(coord + d) || set.has(coord - d)) return 'fold';
+    }
+    return 'cut';
+  }
+  raw.forEach(p => {
+    p.adj     = { right: null, left: null, top: null, bottom: null };
+    p.adjEdge = { right: null, left: null, top: null, bottom: null };
+    const pr = Math.round(p.x + p.w), pb = Math.round(p.y + p.h);
+    const pl = Math.round(p.x),       pt = Math.round(p.y);
+    // Right
+    for (let dx = 0; dx <= EPS && p.adj.right === null; dx++) {
+      [(byLeft[pr+dx]||[]), dx > 0 ? (byLeft[pr-dx]||[]) : []].forEach(cands => cands.forEach(q => {
+        if (q.id === p.id || p.adj.right !== null) return;
+        if (ovlap(p.y, p.y+p.h, q.y, q.y+q.h) > Math.min(p.h, q.h) * 0.1) {
+          p.adj.right = q.id; p.adjEdge.right = edgeType(pr, vUset);
+        }
+      }));
+    }
+    // Left
+    for (let dx = 0; dx <= EPS && p.adj.left === null; dx++) {
+      [(byRight[pl+dx]||[]), dx > 0 ? (byRight[pl-dx]||[]) : []].forEach(cands => cands.forEach(q => {
+        if (q.id === p.id || p.adj.left !== null) return;
+        if (ovlap(p.y, p.y+p.h, q.y, q.y+q.h) > Math.min(p.h, q.h) * 0.1) {
+          p.adj.left = q.id; p.adjEdge.left = edgeType(pl, vUset);
+        }
+      }));
+    }
+    // Bottom
+    for (let dy = 0; dy <= EPS && p.adj.bottom === null; dy++) {
+      [(byTop[pb+dy]||[]), dy > 0 ? (byTop[pb-dy]||[]) : []].forEach(cands => cands.forEach(q => {
+        if (q.id === p.id || p.adj.bottom !== null) return;
+        if (ovlap(p.x, p.x+p.w, q.x, q.x+q.w) > Math.min(p.w, q.w) * 0.1) {
+          p.adj.bottom = q.id; p.adjEdge.bottom = edgeType(pb, hUset);
+        }
+      }));
+    }
+    // Top
+    for (let dy = 0; dy <= EPS && p.adj.top === null; dy++) {
+      [(byBottom[pt+dy]||[]), dy > 0 ? (byBottom[pt-dy]||[]) : []].forEach(cands => cands.forEach(q => {
+        if (q.id === p.id || p.adj.top !== null) return;
+        if (ovlap(p.x, p.x+p.w, q.x, q.x+q.w) > Math.min(p.w, q.w) * 0.1) {
+          p.adj.top = q.id; p.adjEdge.top = edgeType(pt, hUset);
+        }
+      }));
+    }
+  });
+
+  // Hiyerarşi alanları — kullanıcı popup'tan tanımlar
+  raw.forEach(p => {
+    p.parentId      = null;        // hangi panelin çocuğu (null = root / bağımsız)
+    p.connectionType = 'fold';     // 'fold' | 'continuation'
+  });
+
+  return raw;
+}
+
+function filterOutsidePanels(panels, outside, mw, mh, scale) {
+  return panels.filter(p => {
+    const cx = Math.round((p.x + p.w / 2) * scale);
+    const cy = Math.round((p.y + p.h / 2) * scale);
+    if (cx < 0 || cx >= mw || cy < 0 || cy >= mh) return false;
+    return !outside[cy * mw + cx];
+  });
+}
+
+function simulateScan() {
+  const {W,H,D}=state.settings, TH=D*1.1, GF=D*0.6;
+  const cutPaths = [{left:0,top:0,right:GF+W+D+W,bottom:TH*2+H,width:GF+W+D+W,height:TH*2+H}];
+  const foldPaths = [
+    {left:GF,    top:0,    right:GF,    bottom:TH*2+H, width:0,          height:TH*2+H},
+    {left:GF+W,  top:0,    right:GF+W,  bottom:TH*2+H, width:0,          height:TH*2+H},
+    {left:GF+W+D,top:0,    right:GF+W+D,bottom:TH*2+H, width:0,          height:TH*2+H},
+    {left:0,     top:TH,   right:GF+W+D+W,bottom:TH,   width:GF+W+D+W,  height:0},
+    {left:0,     top:TH+H, right:GF+W+D+W,bottom:TH+H, width:GF+W+D+W,  height:0},
+  ];
+  return { success:true, simulated:true, cutPaths, foldPaths, panels:detectPanels(cutPaths, foldPaths) };
+}
+
+function showPanelEditor(panels) {
+  const img = document.getElementById('dieEditorImg');
+  if (!img || !img.naturalWidth) return;
+  const natW = img.naturalWidth, natH = img.naturalHeight;
+  const overlays = document.getElementById('panelOverlays');
+  if (!overlays) return;
+  overlays.innerHTML = '';
+
+  const panelById = {};
+  panels.forEach(p => panelById[p.id] = p);
+
+  panels.forEach(p => {
+    const col = FACE_COLORS[p.face] || '#888';
+    const l = (p.x / natW * 100).toFixed(3);
+    const t = (p.y / natH * 100).toFixed(3);
+    const w = (p.w / natW * 100).toFixed(3);
+    const h = (p.h / natH * 100).toFixed(3);
+
+    const isRoot     = p.face === 'front' && p.parentId === null;
+    const hasParent  = p.parentId !== null;
+    const borderStyle = isRoot ? `2px solid #c8b97a` : hasParent ? `1.5px solid ${col}cc` : `1.5px dashed #555`;
+
+    const div = document.createElement('div');
+    div.style.cssText = `position:absolute;left:${l}%;top:${t}%;width:${w}%;height:${h}%;background:${col}22;border:${borderStyle};box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:background 0.15s`;
+    div.dataset.id = p.id;
+
+    const lbl = document.createElement('span');
+    lbl.className = 'overlay-label';
+    lbl.style.color = isRoot ? '#c8b97a' : col;
+    lbl.textContent = `#${p.id} ${p.label}`;
+    div.appendChild(lbl);
+
+    const hier = document.createElement('span');
+    hier.style.cssText = 'font-size:10px;font-family:DM Mono,monospace;letter-spacing:0.04em;background:rgba(0,0,0,0.55);padding:2px 6px;border-radius:3px;pointer-events:none';
+    if (isRoot) {
+      hier.textContent = 'ROOT'; hier.style.color = '#c8b97a';
+    } else if (hasParent) {
+      const ct = p.connectionType === 'fold' ? 'fold' : 'cont.';
+      hier.textContent = `↑#${p.parentId} ${ct}`; hier.style.color = '#3a9e6e';
+    } else {
+      hier.textContent = '↑ ?'; hier.style.color = '#666';
+    }
+    div.appendChild(hier);
+
+    div.addEventListener('mouseenter', () => div.style.background = col+'44');
+    div.addEventListener('mouseleave', () => div.style.background = col+'22');
+    div.addEventListener('click', e => { e.stopPropagation(); showPanelPopup(p.id, e); });
+    overlays.appendChild(div);
+  });
+
+  // ── Fold line overlay'leri (görsel, tıklanamaz) ─────
+  const drawnEdges = new Set();
+  panels.forEach(p => {
+    if (!p.adj || !p.adjEdge) return;
+    ['right', 'bottom'].forEach(dir => {
+      if (p.adj[dir] == null || p.adjEdge[dir] !== 'fold') return;
+      const edgeKey = `${Math.min(p.id, p.adj[dir])}-${Math.max(p.id, p.adj[dir])}`;
+      if (drawnEdges.has(edgeKey)) return;
+      drawnEdges.add(edgeKey);
+
+      const adjId  = p.adj[dir];
+      // Bu kenarın tanımlı bir fold/continuation bağlantısı var mı?
+      const linked = (p.parentId === adjId && p.connectionType === 'fold') ||
+                     (panelById[adjId]?.parentId === p.id && panelById[adjId]?.connectionType === 'fold');
+      const color  = linked ? '#c8b97a' : '#3a9e6e';
+      const style  = linked ? 'solid'   : 'dashed';
+
+      const line = document.createElement('div');
+      line.style.pointerEvents = 'none';
+
+      if (dir === 'right') {
+        const lx = ((p.x + p.w) / natW * 100).toFixed(3);
+        const lt = (p.y / natH * 100).toFixed(3);
+        const lh = (p.h / natH * 100).toFixed(3);
+        line.style.cssText = `position:absolute;left:${lx}%;top:${lt}%;width:4px;height:${lh}%;margin-left:-2px;z-index:4;box-sizing:border-box;pointer-events:none;`;
+        line.style.borderLeft = `2px ${style} ${color}`;
+        if (linked) line.style.boxShadow = `0 0 4px ${color}88`;
+      } else {
+        const ll  = (p.x / natW * 100).toFixed(3);
+        const lty = ((p.y + p.h) / natH * 100).toFixed(3);
+        const lw  = (p.w / natW * 100).toFixed(3);
+        line.style.cssText = `position:absolute;left:${ll}%;top:${lty}%;width:${lw}%;height:4px;margin-top:-2px;z-index:4;box-sizing:border-box;pointer-events:none;`;
+        line.style.borderTop = `2px ${style} ${color}`;
+        if (linked) line.style.boxShadow = `0 0 4px ${color}88`;
+      }
+      overlays.appendChild(line);
+    });
+  });
+}
+
+function showPanelPopup(panelId, clickEvent) {
+  const popup = document.getElementById('facePopup');
+  if (!popup) return;
+  const panel = state.panels.find(p => p.id === panelId);
+  if (!panel) return;
+
+  const others = state.panels.filter(p => p.id !== panelId);
+  const isCont = panel.connectionType === 'continuation';
+
+  popup.style.minWidth = '190px';
+  popup.innerHTML = `
+    <div style="padding:6px 6px 4px">
+      <div style="font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px">Yüz Rolü</div>
+      ${FACE_OPTIONS.map(o => `<button class="fpbtn pp-face${panel.face===o.v?' active':''}" data-v="${o.v}">${o.l}</button>`).join('')}
+    </div>
+    <div style="border-top:1px solid var(--border);padding:8px 6px 6px;margin-top:2px">
+      <div style="font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:7px">Hiyerarşi</div>
+      <div style="font-size:10px;color:var(--text-2);margin-bottom:4px">Parent Panel</div>
+      <select id="pp-parent" style="width:100%;background:var(--s1);color:var(--text);border:1px solid var(--border);font-size:11px;padding:5px 6px;border-radius:5px;outline:none;margin-bottom:8px">
+        <option value="">— Kök (parent yok) —</option>
+        ${others.map(p => `<option value="${p.id}"${panel.parentId===p.id?' selected':''}>#${p.id} ${p.label}</option>`).join('')}
+      </select>
+      <div style="font-size:10px;color:var(--text-2);margin-bottom:5px">Bağlantı Tipi</div>
+      <div style="display:flex;gap:4px">
+        <button class="fpbtn pp-conn${!isCont?' active':''}" data-conn="fold" style="flex:1">Fold</button>
+        <button class="fpbtn pp-conn${isCont?' active':''}"  data-conn="continuation" style="flex:1">Kesimsiz</button>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding:6px 6px 4px">
+      <button class="btn-primary pp-ok" style="margin:0;padding:10px 16px">Tamam</button>
+    </div>`;
+
+  function applyAndRefresh() {
+    popup.style.display = 'none';
+    showPanelEditor(state.panels);
+    if (boxInit) buildBoxFrom({ panels: state.panels });
+  }
+
+  popup.querySelectorAll('.pp-face').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const UNIQUE = new Set(['front','back','left','right','top','bottom']);
+      if (UNIQUE.has(btn.dataset.v)) {
+        state.panels.forEach(q => {
+          if (q.id !== panelId && q.face === btn.dataset.v) { q.face = 'extra'; q.label = FACE_LABELS['extra']; }
+        });
+      }
+      panel.face = btn.dataset.v; panel.label = FACE_LABELS[btn.dataset.v] || btn.dataset.v;
+      popup.querySelectorAll('.pp-face').forEach(b => b.classList.toggle('active', b === btn));
+    });
+  });
+
+  popup.querySelector('#pp-parent').addEventListener('change', e => {
+    e.stopPropagation();
+    const val = e.target.value;
+    if (panel.parentId !== null) delete state.foldState[String(panel.id)];
+    panel.parentId = val === '' ? null : parseInt(val);
+    if (panel.parentId !== null && panel.connectionType === 'fold') {
+      state.foldState[String(panel.id)] = 90;
+    }
+  });
+
+  popup.querySelectorAll('.pp-conn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      panel.connectionType = btn.dataset.conn;
+      if (panel.parentId !== null) {
+        if (panel.connectionType === 'fold') {
+          if (state.foldState[String(panel.id)] === undefined) state.foldState[String(panel.id)] = 90;
+        } else {
+          delete state.foldState[String(panel.id)];
+        }
+      }
+      popup.querySelectorAll('.pp-conn').forEach(b => b.classList.toggle('active', b === btn));
+    });
+  });
+
+  popup.querySelector('.pp-ok').addEventListener('click', e => {
+    e.stopPropagation();
+    applyAndRefresh();
+  });
+
+  const wrap = document.getElementById('dieEditorWrap');
+  const wRect = wrap.getBoundingClientRect();
+  popup.style.display = 'block';
+  const pw = popup.offsetWidth,  ww = wrap.offsetWidth;
+  const ph = popup.offsetHeight;
+  const clickY = clickEvent.clientY - wRect.top;
+  const clickX = clickEvent.clientX - wRect.left;
+  const isTopHalf = clickEvent.clientY < window.innerHeight / 2;
+  let top  = isTopHalf ? clickY + 8 : clickY - ph - 8;
+  let left = clickX + 8;
+  if (left + pw > ww) left = Math.max(0, clickX - pw - 8);
+  top = Math.max(0, Math.min(top, wrap.offsetHeight - ph));
+  popup.style.top  = top + 'px';
+  popup.style.left = left + 'px';
+}
+
+// ─── IMAGE ANALYSIS ───────────────────────────────
+async function analyzeImagePaths(imageUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const MAX = 800;
+        const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+        const cw = Math.round(img.width * scale);
+        const ch = Math.round(img.height * scale);
+        const cv = document.createElement('canvas');
+        cv.width = cw; cv.height = ch;
+        const ctx = cv.getContext('2d');
+        ctx.drawImage(img, 0, 0, cw, ch);
+        const px = ctx.getImageData(0, 0, cw, ch).data;
+        const outside = detectOutsideMask(px, cw, ch);
+        const cutRgb  = hexToRgb(state.settings.cutColor);
+        const foldRgb = hexToRgb(state.settings.foldColor);
+        const TOL = 65;
+
+        const cutRows  = new Int32Array(ch), cutCols  = new Int32Array(cw);
+        const foldRows = new Int32Array(ch), foldCols = new Int32Array(cw);
+
+        for (let y = 0; y < ch; y++) {
+          for (let x = 0; x < cw; x++) {
+            const i = (y * cw + x) * 4;
+            if (px[i+3] < 30) continue;
+            if (outside[y * cw + x]) continue;
+            const c = {r:px[i], g:px[i+1], b:px[i+2]};
+            if (colorMatch(c, cutRgb,  TOL)) { cutRows[y]++;  cutCols[x]++; }
+            if (colorMatch(c, foldRgb, TOL)) { foldRows[y]++; foldCols[x]++; }
+          }
+        }
+
+        const minHitsPrimary   = Math.max(4, Math.round(Math.min(cw, ch) * 0.04));
+        const minHitsSecondary = Math.max(1, Math.round(Math.min(cw, ch) * 0.008));
+        const inv = 1 / scale;
+
+        function findBands(arr, len, threshold) {
+          const bands = [];
+          let inLine = false, lineStart = 0;
+          for (let i = 0; i <= len; i++) {
+            const hit = i < len && arr[i] > threshold;
+            if (hit && !inLine)      { inLine = true; lineStart = i; }
+            else if (!hit && inLine) { inLine = false; bands.push((lineStart + i - 1) / 2); }
+          }
+          return bands;
+        }
+
+        const cutHBands  = findBands(cutRows,  ch, minHitsPrimary);
+        const cutVBands  = findBands(cutCols,  cw, minHitsPrimary);
+        let foldHBands = findBands(foldRows, ch, minHitsPrimary);
+        if (!foldHBands.length) foldHBands = findBands(foldRows, ch, minHitsSecondary);
+        let foldVBands = findBands(foldCols, cw, minHitsPrimary);
+        if (!foldVBands.length) foldVBands = findBands(foldCols, cw, minHitsSecondary);
+
+        if (!cutHBands.length || !cutVBands.length) {
+          resolve({cutPaths: [], foldPaths: [], outside, maskW: cw, maskH: ch, scale});
+          return;
+        }
+
+        const left   = cutVBands[0]                    * inv;
+        const right  = cutVBands[cutVBands.length - 1] * inv;
+        const top    = cutHBands[0]                    * inv;
+        const bottom = cutHBands[cutHBands.length - 1] * inv;
+
+        const cutPaths = [{ left, top, right, bottom, width: right - left, height: bottom - top }];
+
+        const foldPaths = [];
+        foldHBands.forEach(b => {
+          const ly = b * inv;
+          foldPaths.push({ left, top: ly, right, bottom: ly, width: right - left, height: 0 });
+        });
+        foldVBands.forEach(b => {
+          const lx = b * inv;
+          foldPaths.push({ left: lx, top, right: lx, bottom, width: 0, height: bottom - top });
+        });
+
+        resolve({cutPaths, foldPaths, outside, maskW: cw, maskH: ch, scale});
+      } catch(e) { reject(e); }
+    };
+    img.onerror = () => reject(new Error('Görsel yüklenemedi'));
+    img.src = imageUrl;
+  });
+}
+
+async function scanFromImage() {
+  if (!state.dielineUrl) { showStatus('Önce blank bıçak izi görseli yükleyin.', 'err'); return; }
+  const btn = document.getElementById('scanImageBtn');
+  btn.disabled = true; btn.textContent = 'Analiz ediliyor...';
+  showStatus('Blank diecut piksel analizi yapılıyor...', '');
+  try {
+    const {cutPaths, foldPaths, outside, maskW, maskH, scale} = await analyzeImagePaths(state.dielineUrl);
+    if (!cutPaths.length && !foldPaths.length) {
+      showStatus(`Çizgi bulunamadı. Ayarlardaki kesim (${state.settings.cutColor}) ve kırım (${state.settings.foldColor}) renklerini kontrol edin.`, 'err');
+      return;
+    }
+    const rawPanels = detectPanels(cutPaths, foldPaths);
+    const panels = filterOutsidePanels(rawPanels, outside, maskW, maskH, scale);
+    state.cutPaths=cutPaths; state.foldPaths=foldPaths;
+    state.panels=panels; state.scanned=true;
+    state.foldState = {}; initFoldState(panels);
+    showResults({cutPaths, foldPaths, panels, simulated:false});
+    if (boxInit) buildBoxFrom({panels});
+  } catch(e) {
+    showStatus('Hata: '+(e.message||String(e)), 'err');
+  } finally {
+    btn.disabled=false; btn.textContent='Analiz Et';
+  }
+}
+
+// ─── UI ───────────────────────────────────────────
+function showStatus(msg, type) {
+  const box = document.getElementById('statusBox');
+  box.textContent = msg;
+  box.className = 'status' + (type ? ' '+type : '');
+}
+
+function showResults(result) {
+  document.getElementById('resultsSection').style.display = 'block';
+  document.getElementById('resultsList').innerHTML = [
+    {dot:state.settings.cutColor,  label:'Kesim çizgisi', count:result.cutPaths.length},
+    {dot:state.settings.foldColor, label:'Kırım çizgisi', count:result.foldPaths.length},
+    {dot:'#c8b97a', label:'Panel tespit', count:result.panels.length},
+  ].map(item=>`
+    <div class="rrow">
+      <div class="rlabel"><div class="rdot" style="background:${item.dot}"></div>${item.label}</div>
+      <div class="rcount">${item.count}</div>
+    </div>
+  `).join('');
+  const msg = result.simulated
+    ? `Demo mod — ${result.panels.length} panel. Döküman açıkken tara.`
+    : `${result.cutPaths.length} kesim + ${result.foldPaths.length} kırım. ${result.panels.length} panel.`;
+  showStatus(msg, result.panels.length>0?'ok':'');
+  showPanelEditor(result.panels);
+}
+
+// ─── CSS 3D BOX ───────────────────────────────────
+let tgt={x:0.4,y:0.6}, cur={x:0.4,y:0.6};
+let isDrag=false, px0=0, py0=0, rotActive=true, boxInit=false, animRunning=false;
+let lastBuildResult=null;
+let zoomScale=1, zoomTgt=1;
+let foldAnimTargets={}, foldAnimActive=false;
+
+function initThreeIfNeeded() {
+  if(boxInit) return;
+  boxInit=true;
+  const scene=document.getElementById('scene3d');
+  scene.addEventListener('mousedown',e=>{isDrag=true;px0=e.clientX;py0=e.clientY;});
+  scene.addEventListener('mousemove',e=>{
+    if(!isDrag)return;
+    tgt.y+=(e.clientX-px0)*0.012; tgt.x+=(e.clientY-py0)*0.012;
+    tgt.x=Math.max(-1.4,Math.min(1.4,tgt.x)); px0=e.clientX; py0=e.clientY;
+  });
+  scene.addEventListener('mouseup',()=>isDrag=false);
+  scene.addEventListener('mouseleave',()=>isDrag=false);
+  scene.addEventListener('wheel',e=>{
+    zoomTgt = Math.max(0.3, Math.min(3, zoomTgt - e.deltaY * 0.001));
+    e.preventDefault();
+  },{passive:false});
+  buildBoxFrom(state.scanned?{panels:state.panels}:simulateScan());
+  if(!animRunning){animRunning=true;animLoop();}
+}
+
+function initFoldState(panels) {
+  panels.forEach(p => {
+    if (p.parentId !== null && p.connectionType === 'fold') {
+      if (state.foldState[String(p.id)] === undefined) state.foldState[String(p.id)] = 90;
+    }
+  });
+}
+
+function getPanelDirection(parent, child) {
+  const dx = (child.x + child.w / 2) - (parent.x + parent.w / 2);
+  const dy = (child.y + child.h / 2) - (parent.y + parent.h / 2);
+  return Math.abs(dx) >= Math.abs(dy) ? (dx >= 0 ? 'right' : 'left') : (dy >= 0 ? 'bottom' : 'top');
+}
+
+function computeFoldTransform(panels, sc, d) {
+  const transforms = {};
+  const panelById = {};
+  panels.forEach(p => panelById[p.id] = p);
+
+  function walk(panel, chain) {
+    if (transforms[panel.id] !== undefined) return;
+    transforms[panel.id] = chain;
+    const pw = panel.w * sc, ph = panel.h * sc;
+    panels.filter(c => c.parentId === panel.id).forEach(child => {
+      if (transforms[child.id] !== undefined) return;
+      const dir = getPanelDirection(panel, child);
+      const cw = child.w * sc, ch = child.h * sc;
+      let next;
+      if (child.connectionType === 'fold') {
+        const alpha = state.foldState[String(child.id)] ?? 90;
+        if (dir === 'right')  next = `${chain} translateX(${pw/2}px) rotateY(${alpha}deg) translateX(${cw/2}px)`;
+        if (dir === 'left')   next = `${chain} translateX(${-pw/2}px) rotateY(${-alpha}deg) translateX(${-cw/2}px)`;
+        if (dir === 'bottom') next = `${chain} translateY(${ph/2}px) rotateX(${-alpha}deg) translateY(${ch/2}px)`;
+        if (dir === 'top')    next = `${chain} translateY(${-ph/2}px) rotateX(${alpha}deg) translateY(${-ch/2}px)`;
+      } else {
+        // continuation — aynı düzlemde, sadece öteleme
+        if (dir === 'right')  next = `${chain} translateX(${(pw + cw) / 2}px)`;
+        if (dir === 'left')   next = `${chain} translateX(${-(pw + cw) / 2}px)`;
+        if (dir === 'bottom') next = `${chain} translateY(${(ph + ch) / 2}px)`;
+        if (dir === 'top')    next = `${chain} translateY(${-(ph + ch) / 2}px)`;
+      }
+      if (next) walk(child, next);
+    });
+  }
+
+  const root = panels.find(p => p.face === 'front') || panels[0];
+  if (!root) return transforms;
+  walk(root, `translateZ(${d / 2}px)`);
+  return transforms;
+}
+
+function buildBoxFrom(result) {
+  lastBuildResult = result;
+  const box = document.getElementById('box3d');
+  if (!box) return;
+  box.innerHTML = '';
+
+  const panels = result?.panels || [];
+  const faceMap = {};
+  panels.forEach(p => { if (p.face) faceMap[p.face] = p; });
+
+  const fp = faceMap['front'], rp = faceMap['right'] || faceMap['left'], tp = faceMap['top'] || faceMap['bottom'];
+  const W_px = fp?.w || state.settings.W;
+  const H_px = fp?.h || state.settings.H;
+  const D_px = rp?.w || tp?.h || state.settings.D;
+  const sc   = 150 / Math.max(W_px, H_px, D_px);
+  const w = W_px * sc, h = H_px * sc, d = D_px * sc;
+
+  state.boxDims = { w, h, d };
+
+  // Per-face scaled dimensions (fallback to global w/h/d if panel absent)
+  function fd(name, fallbackW, fallbackH) {
+    const p = faceMap[name];
+    return p ? { fw: p.w * sc, fh: p.h * sc } : { fw: fallbackW, fh: fallbackH };
+  }
+  const useHierarchy = !!faceMap['front'] && panels.some(p => p.parentId !== null);
+  const hasAdj = useHierarchy || !!faceMap['front']?.adj;
+
+  let flatMinX=Infinity, flatMinY=Infinity, flatMaxX=-Infinity, flatMaxY=-Infinity;
+  panels.forEach(p => {
+    flatMinX = Math.min(flatMinX, p.x); flatMinY = Math.min(flatMinY, p.y);
+    flatMaxX = Math.max(flatMaxX, p.x + p.w); flatMaxY = Math.max(flatMaxY, p.y + p.h);
+  });
+  const flatW = isFinite(flatMaxX) ? flatMaxX - flatMinX : 1;
+  const flatH = isFinite(flatMaxY) ? flatMaxY - flatMinY : 1;
+
+  // ── Yüz oluşturucu yardımcı fonksiyon ─────────────
+  function addFace(container, faceName, fw, fh, tr, ir, op) {
+    op = (op == null) ? 1 : op;
+    const col       = FACE_COLORS[faceName] || '#666';
+    const panel     = faceMap[faceName];
+    const label     = panel?.label || FACE_LABELS[faceName] || '';
+    const isSelected = state.selectedFace === faceName;
+
+    let bgStyle, showLabel = true;
+    if (state.artworkUrl && panel) {
+      const bgW = flatW * sc, bgH = flatH * sc;
+      const bgX = -(panel.x - flatMinX) * sc, bgY = -(panel.y - flatMinY) * sc;
+      bgStyle   = `background-image:url('${state.artworkUrl}');background-size:${bgW}px ${bgH}px;background-position:${bgX}px ${bgY}px;background-repeat:no-repeat;`;
+      showLabel = false;
+    } else {
+      bgStyle = `background:${col}22;`;
+    }
+
+    const el = document.createElement('div');
+    el.className    = 'face3d';
+    el.dataset.face = faceName;
+    el.style.cssText = `width:${fw}px;height:${fh}px;margin-left:${-fw/2}px;margin-top:${-fh/2}px;transform:${tr};${bgStyle}${isSelected?'border:2px solid #c8b97a;':'border:none;'}color:${col}dd;cursor:pointer;backface-visibility:hidden;opacity:${op};`;
+    if (showLabel) el.textContent = label;
+
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      state.selectedFace = faceName;
+      if (['front','back','right','left','top','bottom'].includes(faceName)) snap(faceName);
+      buildBoxFrom(lastBuildResult);
+      const info = document.getElementById('faceInfo');
+      if (info) info.textContent = label;
+    });
+    container.appendChild(el);
+
+    // İç yüz (beyaz)
+    const inner = document.createElement('div');
+    inner.style.cssText = `position:absolute;width:${fw}px;height:${fh}px;margin-left:${-fw/2}px;margin-top:${-fh/2}px;transform:${tr} ${ir};background:#ffffff;backface-visibility:hidden;border:none;opacity:${op};`;
+    container.appendChild(inner);
+  }
+
+  // ── Kutu gövdesi ─────────────────────────────────
+  const fFront  = fd('front',  w, h), fBack   = fd('back',   w, h);
+  const fRight  = fd('right',  d, h), fLeft   = fd('left',   d, h);
+  const fBottom = fd('bottom', w, d), fTop    = fd('top',    w, d);
+
+  let foldTransforms = {};
+  if (hasAdj) {
+    foldTransforms = computeFoldTransform(panels, sc, d);
+    panels.forEach(p => {
+      if (p.face === 'tuck_in') return; // içeride kalır, dışarıdan görünmez
+      if (!foldTransforms[p.id]) return;
+      addFace(box, p.face, p.w * sc, p.h * sc, foldTransforms[p.id], 'rotateY(180deg)');
+    });
+  } else {
+    // Fallback: hardcoded global boyutlar
+    addFace(box, 'front',  w, h, `translateZ(${d/2}px)`,                 'rotateY(180deg)');
+    addFace(box, 'back',   w, h, `rotateY(180deg) translateZ(${d/2}px)`, 'rotateY(180deg)');
+    addFace(box, 'right',  d, h, `rotateY(90deg) translateZ(${w/2}px)`,  'rotateY(180deg)');
+    addFace(box, 'left',   d, h, `rotateY(-90deg) translateZ(${w/2}px)`, 'rotateY(180deg)');
+    addFace(box, 'bottom', w, d, `rotateX(-90deg) translateZ(${h/2}px)`, 'rotateX(180deg)');
+  }
+
+  // ── Tuck-out: alt kapağa bağlı, ön-alt kenardan sarkar ──
+  const toP = faceMap['tuck_out'];
+  if (toP) {
+    const to_h = Math.max(toP.h * sc, d * 0.4);
+    if (hasAdj && foldTransforms[toP.id]) {
+      addFace(box, 'tuck_out', toP.w * sc, to_h, foldTransforms[toP.id], 'rotateY(180deg)', 0.75);
+    } else {
+      addFace(box, 'tuck_out', fFront.fw, to_h,
+        `translateY(${h/2 + to_h/2}px) translateZ(${d/2}px)`,
+        'rotateY(180deg)', 0.75);
+    }
+  }
+
+  // Fold badge güncelle
+  const _fTotal = Object.keys(state.foldState).length;
+  const _fDone  = Object.values(state.foldState).filter(v => v >= 89).length;
+  const _fEl = document.getElementById('foldBadge');
+  if (_fEl) _fEl.textContent = _fTotal ? `${_fDone}/${_fTotal} ▣` : '';
+}
+
+
+function animLoop() {
+  requestAnimationFrame(animLoop);
+  if(rotActive&&!isDrag) tgt.y+=0.007;
+  cur.x+=(tgt.x-cur.x)*0.1; cur.y+=(tgt.y-cur.y)*0.1;
+  zoomScale+=(zoomTgt-zoomScale)*0.12;
+  const box=document.getElementById('box3d');
+  if(box) box.style.transform=`scale(${zoomScale.toFixed(3)}) rotateX(${(cur.x*180/Math.PI).toFixed(2)}deg) rotateY(${(cur.y*180/Math.PI).toFixed(2)}deg)`;
+
+  if (foldAnimActive) {
+    let moving = false;
+    Object.keys(foldAnimTargets).forEach(k => {
+      const t  = foldAnimTargets[k];
+      const c  = state.foldState[k] ?? 90;
+      const dd = t - c;
+      if (Math.abs(dd) < 0.3) { state.foldState[k] = t; }
+      else { state.foldState[k] = c + dd * 0.15; moving = true; }
+    });
+    // Re-sync fold state keys: animTargets may use string keys, foldState the same
+    buildBoxFrom({ panels: state.panels });
+    if (!moving) { foldAnimActive = false; foldAnimTargets = {}; }
+  }
+}
+
+function snap(face) {
+  const s={front:{x:0,y:0},back:{x:0,y:Math.PI},right:{x:0,y:-Math.PI/2},left:{x:0,y:Math.PI/2},top:{x:-Math.PI/2,y:0},bottom:{x:Math.PI/2,y:0}};
+  if(s[face]){tgt.x=s[face].x;tgt.y=s[face].y;}
+}
+
+function toggleRot() {
+  rotActive=!rotActive;
+  document.getElementById('vbtn-rot').classList.toggle('on',rotActive);
+  document.getElementById('vbtn-rot').textContent=rotActive?'↻ Döndür':'↻ Dur';
+}
+
+function resizeRenderer() {}
+
+// ─── EVENT LISTENERS ──────────────────────────────
+window.addEventListener('load', () => {
+  document.getElementById('tab-scan-btn').addEventListener('click', () => switchTab('scan'));
+  document.getElementById('tab-preview-btn').addEventListener('click', () => switchTab('preview'));
+  document.getElementById('tab-settings-btn').addEventListener('click', () => switchTab('settings'));
+
+  document.getElementById('scanBtn').addEventListener('click', scanDocument);
+  document.getElementById('previewBtn').addEventListener('click', () => switchTab('preview'));
+
+  document.getElementById('saveBtn').addEventListener('click', saveSettings);
+  document.getElementById('cutColor').addEventListener('input', () => updateDot('cut'));
+  document.getElementById('foldColor').addEventListener('input', () => updateDot('fold'));
+
+  ['front','top','right','back','bottom','left'].forEach(face => {
+    document.getElementById('vbtn-'+face).addEventListener('click', () => snap(face));
+  });
+  document.getElementById('vbtn-rot').addEventListener('click', toggleRot);
+  document.getElementById('vbtn-zoom-reset').addEventListener('click', () => { zoomTgt=1; });
+  document.getElementById('vbtn-fold-all').addEventListener('click', () => {
+    Object.keys(state.foldState).forEach(k => foldAnimTargets[k] = 90);
+    foldAnimActive = true; showPanelEditor(state.panels);
+  });
+  document.getElementById('vbtn-unfold-all').addEventListener('click', () => {
+    Object.keys(state.foldState).forEach(k => foldAnimTargets[k] = 0);
+    foldAnimActive = true; showPanelEditor(state.panels);
+  });
+
+  document.getElementById('scanImageBtn').addEventListener('click', scanFromImage);
+
+  document.getElementById('dieEditorWrap')?.addEventListener('click', () => {
+    document.getElementById('facePopup').style.display = 'none';
+  });
+
+  document.getElementById('dielineInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.addEventListener('load', function(ev) {
+      state.dielineUrl = ev.target.result;
+      document.getElementById('dieEditorImg').src = ev.target.result;
+      document.getElementById('dieEditor').style.display = 'block';
+      document.getElementById('panelOverlays').innerHTML = '';
+      document.getElementById('facePopup').style.display = 'none';
+      document.getElementById('dielineUploadArea').style.borderColor = '#c8b97a';
+    });
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('artworkInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.addEventListener('load', function(ev) {
+      state.artworkUrl = ev.target.result;
+      const prev = document.getElementById('artworkPreview');
+      prev.src = ev.target.result;
+      prev.style.display = 'block';
+      document.getElementById('artworkUploadArea').style.borderColor = '#c8b97a';
+      if(boxInit) buildBoxFrom(lastBuildResult || {panels: state.panels});
+    });
+    reader.readAsDataURL(file);
+  });
+
+  const result = simulateScan();
+  state.cutPaths=result.cutPaths; state.foldPaths=result.foldPaths;
+  state.panels=result.panels; state.scanned=true;
+  state.foldState = {}; initFoldState(result.panels);
+  showResults(result);
+});
+
+window.addEventListener('resize', resizeRenderer);
+
+// ─── ISO EXPORT ────────────────────────────────────
+const COS30 = Math.sqrt(3) / 2;
+const SIN30 = 0.5;
+
+function isoProj(x, y, z, flipX, s, ox, oy) {
+  const a = flipX ? -x : x;
+  return {
+    x: ox + (a - z) * COS30 * s,
+    y: oy + (a + z) * SIN30 * s - y * s
+  };
+}
+
+function drawIsoFace(ctx, corners, color, artImg, srcX, srcY, srcW, srcH, shade) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(corners[0].x, corners[0].y);
+  for (let i = 1; i < corners.length; i++) ctx.lineTo(corners[i].x, corners[i].y);
+  ctx.closePath();
+  ctx.clip();
+
+  if (artImg && srcW > 0 && srcH > 0) {
+    const e1x = corners[1].x - corners[0].x, e1y = corners[1].y - corners[0].y;
+    const e2x = corners[3].x - corners[0].x, e2y = corners[3].y - corners[0].y;
+    ctx.transform(
+      e1x / srcW,  e1y / srcW,
+      e2x / srcH,  e2y / srcH,
+      corners[0].x - e1x * srcX / srcW - e2x * srcY / srcH,
+      corners[0].y - e1y * srcX / srcW - e2y * srcY / srcH
+    );
+    ctx.drawImage(artImg, 0, 0);
+  } else {
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+  ctx.restore();
+
+  if (shade > 0) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(corners[0].x, corners[0].y);
+    for (let i = 1; i < corners.length; i++) ctx.lineTo(corners[i].x, corners[i].y);
+    ctx.closePath();
+    ctx.fillStyle = `rgba(0,0,0,${shade})`;
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function renderExportAngle(preset, W, H, D, faceMap, flatMinX, flatMinY, flatW, flatH, artImg, bgColor, exportScale) {
+  const MARGIN = 40;
+  const TARGET = 500 * exportScale;
+  const s = TARGET / Math.max(W + D, H + D);
+
+  const { flipX, showBack, ortho } = preset;
+
+  function p(x, y, z) { return isoProj(x, y, z, flipX, s, 0, 0); }
+
+  // 8 corners: origin = front-bottom-left
+  const rawCorners = {
+    A: p(0,0,0), B: p(W,0,0), Cv: p(W,H,0), Dv: p(0,H,0),
+    E: p(0,0,D), F: p(W,0,D), G: p(W,H,D), Hv: p(0,H,D),
+  };
+
+  const pts = Object.values(rawCorners);
+  const minX = Math.min(...pts.map(q=>q.x)) - MARGIN;
+  const minY = Math.min(...pts.map(q=>q.y)) - MARGIN;
+  const maxX = Math.max(...pts.map(q=>q.x)) + MARGIN;
+  const maxY = Math.max(...pts.map(q=>q.y)) + MARGIN;
+
+  const cw = maxX - minX, ch = maxY - minY;
+  const canvas = document.createElement('canvas');
+  canvas.width = cw; canvas.height = ch;
+  const ctx = canvas.getContext('2d');
+
+  if (bgColor) { ctx.fillStyle = bgColor; ctx.fillRect(0, 0, cw, ch); }
+
+  // Offset all corners
+  const c = {};
+  Object.keys(rawCorners).forEach(k => {
+    c[k] = { x: rawCorners[k].x - minX, y: rawCorners[k].y - minY };
+  });
+
+  function crop(faceName) {
+    const panel = faceMap[faceName];
+    if (!artImg || !panel) return null;
+    return {
+      sx: (panel.x - flatMinX) / flatW * artImg.width,
+      sy: (panel.y - flatMinY) / flatH * artImg.height,
+      sw:  panel.w / flatW * artImg.width,
+      sh:  panel.h / flatH * artImg.height,
+    };
+  }
+
+  if (!ortho) {
+    // Top face
+    {
+      const cr = crop('top');
+      const fc = [c.Dv, c.Cv, c.G, c.Hv];
+      drawIsoFace(ctx, fc, FACE_COLORS.top, artImg, cr?.sx, cr?.sy, cr?.sw, cr?.sh, 0);
+    }
+    // Side face (right or left)
+    {
+      const sideName = flipX ? 'left' : 'right';
+      const cr = crop(sideName);
+      const fc = flipX
+        ? [c.Dv, c.A, c.E, c.Hv]
+        : [c.Cv, c.B, c.F, c.G];
+      drawIsoFace(ctx, fc, FACE_COLORS[sideName], artImg, cr?.sx, cr?.sy, cr?.sw, cr?.sh, 0.15);
+    }
+    // Front or back face
+    {
+      const faceName = showBack ? 'back' : 'front';
+      const cr = crop(faceName);
+      const fc = showBack
+        ? [c.Hv, c.G, c.F, c.E]
+        : [c.Dv, c.Cv, c.B, c.A];
+      drawIsoFace(ctx, fc, FACE_COLORS[faceName], artImg, cr?.sx, cr?.sy, cr?.sw, cr?.sh, 0.25);
+    }
+  }
+
+  if (ortho && preset.id === 'front') {
+    const fw = W * s, fh = H * s;
+    const fx = (cw - fw) / 2, fy = (ch - fh) / 2;
+    const cr = crop('front');
+    ctx.save();
+    if (artImg && cr) {
+      ctx.drawImage(artImg, cr.sx, cr.sy, cr.sw, cr.sh, fx, fy, fw, fh);
+    } else {
+      ctx.fillStyle = FACE_COLORS.front;
+      ctx.fillRect(fx, fy, fw, fh);
+    }
+    ctx.restore();
+  }
+
+  if (ortho && preset.id === 'top') {
+    const fw = W * s, fh = D * s;
+    const fx = (cw - fw) / 2, fy = (ch - fh) / 2;
+    const cr = crop('top');
+    ctx.save();
+    if (artImg && cr) {
+      ctx.drawImage(artImg, cr.sx, cr.sy, cr.sw, cr.sh, fx, fy, fw, fh);
+    } else {
+      ctx.fillStyle = FACE_COLORS.top;
+      ctx.fillRect(fx, fy, fw, fh);
+    }
+    ctx.restore();
+  }
+
+  // Edge lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  const edgePaths = [
+    [c.A,c.B,c.Cv,c.Dv],
+    [c.E,c.F,c.G,c.Hv],
+    [c.A,c.E],[c.B,c.F],
+    [c.Cv,c.G],[c.Dv,c.Hv],
+  ];
+  edgePaths.forEach(epts => {
+    ctx.beginPath();
+    ctx.moveTo(epts[0].x, epts[0].y);
+    epts.slice(1).forEach(pp => ctx.lineTo(pp.x, pp.y));
+    if (epts.length === 4) ctx.closePath();
+    ctx.stroke();
+  });
+
+  return canvas;
+}
+
+const EXPORT_PRESETS = [
+  { id:'iso-r',  label:'İzo Sağ',      flipX:false, showBack:false, ortho:false },
+  { id:'iso-l',  label:'İzo Sol',      flipX:true,  showBack:false, ortho:false },
+  { id:'iso-br', label:'İzo Arka Sağ', flipX:false, showBack:true,  ortho:false },
+  { id:'iso-bl', label:'İzo Arka Sol', flipX:true,  showBack:true,  ortho:false },
+  { id:'front',  label:'Önden',        ortho:true },
+  { id:'top',    label:'Üstten',       ortho:true },
+];
+
+function getExportDims() {
+  const panels = state.panels || [];
+  const faceMap = {};
+  panels.forEach(p => { if(p.face) faceMap[p.face] = p; });
+  const fp = faceMap['front'], rp = faceMap['right']||faceMap['left'],
+        tp = faceMap['top']||faceMap['bottom'];
+  return {
+    W: fp?.w || state.settings.W,
+    H: fp?.h || state.settings.H,
+    D: rp?.w || tp?.h || state.settings.D,
+    faceMap,
+  };
+}
+
+function getFlatBounds() {
+  let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+  (state.panels||[]).forEach(p => {
+    minX=Math.min(minX,p.x); minY=Math.min(minY,p.y);
+    maxX=Math.max(maxX,p.x+p.w); maxY=Math.max(maxY,p.y+p.h);
+  });
+  return { flatMinX:minX, flatMinY:minY, flatW:isFinite(maxX)?maxX-minX:1, flatH:isFinite(maxY)?maxY-minY:1 };
+}
+
+function downloadCanvas(canvas, filename) {
+  try {
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = filename;
+    a.click();
+  } catch(e) {
+    window.open(canvas.toDataURL('image/png'));
+  }
+}
+
+async function runExport() {
+  const btn = document.getElementById('exportBtn');
+  btn.disabled = true;
+  btn.textContent = 'Hazırlanıyor...';
+
+  const selected = [...document.querySelectorAll('.export-angle-card.checked')]
+    .map(el => el.dataset.preset);
+  if (!selected.length) { btn.disabled=false; btn.textContent='Seçili Açıları İndir'; return; }
+
+  const bgDark = document.getElementById('exportBgDark').classList.contains('active');
+  const bgColor = bgDark ? '#0e0e0c' : null;
+  const exportScale = parseInt(document.getElementById('exportScale').value) || 2;
+
+  const { W, H, D, faceMap } = getExportDims();
+  const { flatMinX, flatMinY, flatW, flatH } = getFlatBounds();
+
+  const artImg = await new Promise(resolve => {
+    if (!state.artworkUrl) return resolve(null);
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = state.artworkUrl;
+  });
+
+  for (let i = 0; i < selected.length; i++) {
+    const preset = EXPORT_PRESETS.find(p => p.id === selected[i]);
+    if (!preset) continue;
+    btn.textContent = `${i+1}/${selected.length} — ${preset.label}`;
+    const canvas = renderExportAngle(
+      preset, W, H, D, faceMap,
+      flatMinX, flatMinY, flatW, flatH,
+      artImg, bgColor, exportScale
+    );
+    downloadCanvas(canvas, `dieform-${preset.id}.png`);
+    await new Promise(r => setTimeout(r, 200));
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Seçili Açıları İndir';
+}
+
+// Export UI events
+document.querySelectorAll('.export-angle-card').forEach(card => {
+  card.addEventListener('click', () => card.classList.toggle('checked'));
+});
+
+document.getElementById('exportBgDark').addEventListener('click', () => {
+  document.getElementById('exportBgDark').classList.add('active');
+  document.getElementById('exportBgTransparent').classList.remove('active');
+});
+
+document.getElementById('exportBgTransparent').addEventListener('click', () => {
+  document.getElementById('exportBgTransparent').classList.add('active');
+  document.getElementById('exportBgDark').classList.remove('active');
+});
+
+document.getElementById('exportBtn').addEventListener('click', runExport);
+
+// ─── GIF TURNTABLE ──────────────────────────────────
+function renderTurntableFrame(angle, W, H, D, faceMap, flatMinX, flatMinY, flatW, flatH, artImg, bgColor, exportScale) {
+  const SIZE = 400 * exportScale;
+  const MARGIN = 20 * exportScale;
+  const cx = W/2, cy = H/2, cz = D/2;
+  const camDist = Math.max(W, H, D) * 3.5;
+  const TILT = 18 * Math.PI / 180;
+
+  function project(px, py, pz) {
+    const dx = px-cx, dy = py-cy, dz = pz-cz;
+    const cosA = Math.cos(angle), sinA = Math.sin(angle);
+    const rx = dx*cosA - dz*sinA;
+    const rz_rot = dx*sinA + dz*cosA;
+    const cosT = Math.cos(TILT), sinT = Math.sin(TILT);
+    const ry2 = dy*cosT - rz_rot*sinT;
+    const rz2 = dy*sinT + rz_rot*cosT;
+    const d = rz2 + camDist;
+    return { sx: rx/d*camDist, sy: -ry2/d*camDist, depth: rz2 };
+  }
+
+  const pts3D = {
+    A:{x:0,y:0,z:0}, B:{x:W,y:0,z:0}, Cv:{x:W,y:H,z:0}, Dv:{x:0,y:H,z:0},
+    E:{x:0,y:0,z:D}, F:{x:W,y:0,z:D}, G:{x:W,y:H,z:D},  Hv:{x:0,y:H,z:D},
+  };
+  const proj = {};
+  for (const [id, p] of Object.entries(pts3D)) proj[id] = project(p.x, p.y, p.z);
+
+  const allSx = Object.values(proj).map(p => p.sx);
+  const allSy = Object.values(proj).map(p => p.sy);
+  const minSx = Math.min(...allSx), maxSx = Math.max(...allSx);
+  const minSy = Math.min(...allSy), maxSy = Math.max(...allSy);
+  const sc = (SIZE - MARGIN*2) / Math.max(maxSx-minSx, maxSy-minSy);
+  const offX = (SIZE - (maxSx-minSx)*sc) / 2 - minSx*sc;
+  const offY = (SIZE - (maxSy-minSy)*sc) / 2 - minSy*sc;
+
+  function toScreen(p) { return { x: p.sx*sc + offX, y: p.sy*sc + offY }; }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = SIZE; canvas.height = SIZE;
+  const ctx = canvas.getContext('2d');
+  if (bgColor) { ctx.fillStyle = bgColor; ctx.fillRect(0, 0, SIZE, SIZE); }
+
+  function crop(faceName) {
+    const panel = faceMap[faceName];
+    if (!artImg || !panel) return null;
+    return {
+      sx: (panel.x - flatMinX) / flatW * artImg.width,
+      sy: (panel.y - flatMinY) / flatH * artImg.height,
+      sw: panel.w / flatW * artImg.width,
+      sh: panel.h / flatH * artImg.height,
+    };
+  }
+
+  // Corner ordering matches renderExportAngle for correct UV mapping
+  const FACES = [
+    { name:'front',  keys:['Dv','Cv','B','A'],  shade:0.1  },
+    { name:'back',   keys:['Hv','G','F','E'],   shade:0.1  },
+    { name:'right',  keys:['Cv','B','F','G'],   shade:0.15 },
+    { name:'left',   keys:['Dv','A','E','Hv'],  shade:0.15 },
+    { name:'top',    keys:['Dv','Cv','G','Hv'], shade:0.0  },
+    { name:'bottom', keys:['A','B','F','E'],    shade:0.3  },
+  ];
+
+  FACES
+    .map(face => ({ ...face, avgDepth: face.keys.reduce((s,k) => s+proj[k].depth, 0)/4 }))
+    .sort((a, b) => b.avgDepth - a.avgDepth)
+    .forEach(face => {
+      const sc4 = face.keys.map(k => toScreen(proj[k]));
+      const [c0, c1, c2] = sc4;
+      const cross = (c1.x-c0.x)*(c2.y-c0.y) - (c1.y-c0.y)*(c2.x-c0.x);
+      if (cross <= 0) return; // back-face culling
+      const cr = crop(face.name);
+      drawIsoFace(ctx, sc4, FACE_COLORS[face.name]||'#888', artImg, cr?.sx, cr?.sy, cr?.sw, cr?.sh, face.shade);
+    });
+
+  return canvas;
+}
+
+async function runGifExport() {
+  const btn = document.getElementById('gifExportBtn');
+  const progress = document.getElementById('gifProgress');
+  btn.disabled = true;
+  btn.textContent = 'Hazırlanıyor...';
+  progress.style.display = 'block';
+
+  const frameCount = parseInt(document.getElementById('gifFrames').value) || 24;
+  const delay     = parseInt(document.getElementById('gifDelay').value)  || 100;
+  const exportScale = parseInt(document.getElementById('gifScale').value) || 1;
+  const SIZE = 400 * exportScale;
+
+  const bgDark  = document.getElementById('exportBgDark').classList.contains('active');
+  const bgColor = bgDark ? '#0e0e0c' : null;
+
+  const { W, H, D, faceMap } = getExportDims();
+  const { flatMinX, flatMinY, flatW, flatH } = getFlatBounds();
+
+  const artImg = await new Promise(resolve => {
+    if (!state.artworkUrl) return resolve(null);
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = state.artworkUrl;
+  });
+
+  const frames = [];
+  for (let i = 0; i < frameCount; i++) {
+    const angle = (2 * Math.PI / frameCount) * i;
+    progress.textContent = `Kare ${i+1}/${frameCount} hazırlanıyor...`;
+    await new Promise(r => setTimeout(r, 0));
+    const canvas = renderTurntableFrame(angle, W, H, D, faceMap, flatMinX, flatMinY, flatW, flatH, artImg, bgColor, exportScale);
+    frames.push(canvas.toDataURL('image/png'));
+  }
+
+  progress.textContent = 'GIF kodlanıyor...';
+
+  if (typeof gifshot === 'undefined') {
+    btn.disabled = false; btn.textContent = 'GIF İndir'; progress.style.display = 'none';
+    alert('gifshot kütüphanesi yüklenemedi. İnternet bağlantınızı kontrol edin.');
+    return;
+  }
+
+  gifshot.createGIF({
+    images: frames,
+    gifWidth: SIZE,
+    gifHeight: SIZE,
+    interval: delay / 1000,
+    numWorkers: 2,
+    progressCallback(p) {
+      progress.textContent = `GIF kodlanıyor: ${Math.round(p * 100)}%`;
+    },
+  }, obj => {
+    btn.disabled = false; btn.textContent = 'GIF İndir'; progress.style.display = 'none';
+    if (!obj.error) {
+      const a = document.createElement('a');
+      a.href = obj.image; a.download = 'dieform-turntable.gif'; a.click();
+    } else {
+      alert('GIF hatası: ' + (obj.errorMsg || obj.errorCode));
+    }
+  });
+}
+
+document.getElementById('gifExportBtn').addEventListener('click', runGifExport);
+
+document.getElementById('exportToggle').addEventListener('click', () => {
+  const toggle = document.getElementById('exportToggle');
+  const panel  = document.getElementById('exportPanel');
+  const open   = toggle.classList.toggle('open');
+  panel.style.display = open ? 'block' : 'none';
+});
+</script>
 </body>
 </html>
